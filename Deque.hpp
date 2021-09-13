@@ -15,7 +15,7 @@ void push_f(struct Deque_int * deque, int value){
 }
 
 int container_size(struct Deque * deque){
-	return (*deque).capacity;
+	return sizeof((*deque).container);
 }
 
 void pop_b(struct Deque * deque){
@@ -34,10 +34,22 @@ void destructor(struct Deque * deque){
 
 }
 
+void empty(struct Deque * deque){
+	if(capacity == 0){
+		return 0;
+	}else{
+		return 1;
+	}
+}
+
+int elem_at(struct Deque * deque, int index){
+	return ((*deque).container)[index];
+}
+
 
 void Deque_int_ctor(struct Deque_int *, bool (* f)(const int, const int){
-	container = malloc(sizeof(int));
-	type_name = "int";
+	container = malloc(0);
+	type_name = "Deque_int";
 	capacity = 1;
 	push_back = &push_b;
 	push_front = &push_f;
@@ -46,6 +58,20 @@ void Deque_int_ctor(struct Deque_int *, bool (* f)(const int, const int){
 	pop_front = &pop_f;
 	clear = &clear_deq;
 	dtor = &destructor;
+	empty = &empt;
+	at = &elem_at;
+	front = &front_elem;
+	back = &back_elem;
+	begin = &beginning;
+	end = &ending;
+}
+
+Deque_int_iterator beginning(struct Deque_int * deque){
+	return (*deque).container;
+}
+
+Deque_int_iterator ending(struct Deque_int * deque){
+	return (*deque).container + (sizeof((*deque).container));
 }
 
 
@@ -59,14 +85,19 @@ struct Deque_int{
 	void (*pop_front)(struct Deque_int *);
 	void (*clear)(struct Deque_int *);
 	void (*dtor)(struct Deque_int *);
+	void (*empty)(struct Deque_int *);
+	int* (*at)(struct Deque_int *, int);
+	int* (*front)(struct Deque_int *);
+	int* (*back)(struct Deque_int *);
+	Deque_int_Iterator (*begin)(struct Deque_int *);
+	Deque_int_Iterator (*end)(struct Deque_int *);
 }
 
+
 struct Deque_int_Iterator{
-	Deque_int_Iterator (* begin)(struct Deque_int *);
-	Deque_int_Iterator (* end)(struct Deque_int *);
 	void (* inc)(struct Deque_int_Iterator *);
 	void (* dec)(struct Deque_int_Iterator *);
-	void (* deref)(struct Deque_int_Iterator *);
+	int (* deref)(struct Deque_int_Iterator *);
 }
 
 
