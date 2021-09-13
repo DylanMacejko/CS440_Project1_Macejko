@@ -26,6 +26,14 @@ void pop_f(struct Deque * deque){
 
 }
 
+void clear_deq(struct Deque * deque){
+
+}
+
+void destructor(struct Deque * deque){
+
+}
+
 
 void Deque_int_ctor(struct Deque_int *, bool (* f)(const int, const int){
 	container = malloc(sizeof(int));
@@ -36,6 +44,8 @@ void Deque_int_ctor(struct Deque_int *, bool (* f)(const int, const int){
 	size = &container_size;
 	pop_back = &pop_b;
 	pop_front = &pop_f;
+	clear = &clear_deq;
+	dtor = &destructor;
 }
 
 
@@ -47,7 +57,19 @@ struct Deque_int{
 	int (*size)(struct Deque_int *);
 	void (*pop_back)(struct Deque_int *);
 	void (*pop_front)(struct Deque_int *);
+	void (*clear)(struct Deque_int *);
+	void (*dtor)(struct Deque_int *);
 }
+
+struct Deque_int_Iterator{
+	Deque_int_Iterator (* begin)(struct Deque_int *);
+	Deque_int_Iterator (* end)(struct Deque_int *);
+	void (* inc)(struct Deque_int_Iterator *);
+	void (* dec)(struct Deque_int_Iterator *);
+	void (* deref)(struct Deque_int_Iterator *);
+}
+
+
 
 #define Deque_DEFINE
 
