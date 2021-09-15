@@ -62,7 +62,7 @@ struct Deque_int{
 
 void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
 	deque->container = (int*) malloc(0);
-	deque->type_name = "Deque_int";
+	deque->type_name = (char*) "Deque_int";
 	deque->capacity = 0;
 	deque->push_back = &push_b;
 	deque->push_front = &push_f;
