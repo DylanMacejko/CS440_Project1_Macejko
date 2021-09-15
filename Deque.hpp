@@ -5,6 +5,8 @@
 
 struct Deque_int_Iterator{
 	int * location;
+	int * front_ind;
+	int * back_ind;
 	void (* inc)(struct Deque_int_Iterator *);
 	void (* dec)(struct Deque_int_Iterator *);
 	int (* deref)(struct Deque_int_Iterator *);
@@ -44,6 +46,9 @@ struct Deque_int{
 	int* container;
 	char * type_name;
 	int capacity;
+	int num_elements;
+	int* front_indicator;
+	int* back_indicator;
 	Deque_int_Iterator it;
 	void (*push_back)(struct Deque_int *, int);
 	void (*push_front)(struct Deque_int *, int);
@@ -64,6 +69,9 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
 	deque->container = (int*) malloc(0);
 	deque->type_name = (char*) "Deque_int";
 	deque->capacity = 0;
+	deque->num_elements  = 0;
+	deque->front_indicator = NULL;
+	deque->back_indicator = NULL;
 	deque->push_back = &push_b;
 	deque->push_front = &push_f;
 	deque->size = &container_size;
@@ -80,9 +88,32 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
 }
 
 void push_b(struct Deque_int * deque, int value){
-	deque->container = (int*) realloc(deque->container, sizeof(deque->container) + sizeof(int));
-	(deque->container)[deque->capacity] = value;
-	deque->capacity = deque->capacity + 1;
+	if(deque->num_elements == 0){
+		deque->container = (int*) malloc(((int)sizeof(int)) * 4);
+		(deque->container)[1] = value;
+		deque->num_elements = 1;
+		deque->capacity = 4;
+		deque->front_indicator = &((deque->container)[1]);
+		deque->back_indicator = &((deque->front_indicator)[1]);
+	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
+		int* temp = (int*) malloc(deque->capacity * 2);
+		deque->capacity = 2 * deque->capacity;
+		/*
+		struct Deque_int_Iterator it;
+		it.location = deque->front_indicator;
+		it.inc = &increment;
+		it.dec = &decrement;
+		it.deref = &dereference;
+		*/
+		int start_index = (deque->capacity)/4;
+		int index = start_index;
+		do{
+			index++;
+		}while(index != start_index);
+		free(deque->container);
+		deque->container = temp;
+	}
+
 }
 
 void push_f(struct Deque_int * deque, int value){
