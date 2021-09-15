@@ -1,6 +1,28 @@
 #ifndef DEQUE_HPP
 #define DEQUE_HPP
 
+#include <cstdlib>
+
+struct Deque_int_Iterator{
+	int * location;
+	void (* inc)(struct Deque_int_Iterator *);
+	void (* dec)(struct Deque_int_Iterator *);
+	int (* deref)(struct Deque_int_Iterator *);
+};
+
+void increment(struct Deque_int_Iterator *){
+
+}
+
+void decrement(struct Deque_int_Iterator *){
+
+}
+
+int dereference(struct Deque_int_Iterator * it){
+	return *(it->location);
+}
+
+
 void push_b(struct Deque_int * deque, int value);
 void push_f(struct Deque_int * deque, int value);
 int container_size(struct Deque_int * deque);
@@ -22,6 +44,7 @@ struct Deque_int{
 	int* container;
 	char * type_name;
 	int capacity;
+	Deque_int_Iterator it;
 	void (*push_back)(struct Deque_int *, int);
 	void (*push_front)(struct Deque_int *, int);
 	int (*size)(struct Deque_int *);
@@ -38,7 +61,7 @@ struct Deque_int{
 };
 
 void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
-	deque->container = malloc(0);
+	deque->container = (int*) malloc(0);
 	deque->type_name = "Deque_int";
 	deque->capacity = 0;
 	deque->push_back = &push_b;
@@ -57,13 +80,13 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
 }
 
 void push_b(struct Deque_int * deque, int value){
-	deque->container = realloc(deque->container, sizeof(deque->container) + sizeof(int));
+	deque->container = (int*) realloc(deque->container, sizeof(deque->container) + sizeof(int));
 	(deque->container)[deque->capacity] = value;
 	deque->capacity = deque->capacity + 1;
 }
 
 void push_f(struct Deque_int * deque, int value){
-	int* temp = malloc(sizeof(deque->container) + sizeof(int));
+	int* temp = (int*) malloc(sizeof(deque->container) + sizeof(int));
 	temp[0] = value;
 	deque->capacity = deque->capacity + 1;
 	for(int i=0; i<deque->capacity; i++){
@@ -79,12 +102,12 @@ int container_size(struct Deque_int * deque){
 }
 
 void pop_b(struct Deque_int * deque){
-	deque->container = realloc(deque->container, sizeof(deque->container) - sizeof(int));
+	deque->container = (int*) realloc(deque->container, sizeof(deque->container) - sizeof(int));
 	deque->capacity = deque->capacity - 1;
 }
 
 void pop_f(struct Deque_int * deque){
-	int* temp = malloc(sizeof(deque->container) - sizeof(int));
+	int* temp = (int *) malloc(sizeof(deque->container) - sizeof(int));
 	for(int i=1; i<deque->capacity; i++){
 		temp[i-1] = (deque->container)[i];
 	}
@@ -107,17 +130,17 @@ int empt(struct Deque_int * deque){
 	return 1;
 }
 
-int elem_at(struct Deque_int * deque, int index){
-	return (deque->container)[index];
+int* elem_at(struct Deque_int * deque, int index){
+	return &(deque->container)[index];
 }
 
 
 struct Deque_int_Iterator beginning(struct Deque_int * deque){
-	return deque->container;
+	return deque->it;
 }
 
 struct Deque_int_Iterator ending(struct Deque_int * deque){
-	return deque->container + (sizeof(deque->container));
+	return deque->it;
 }
 
 int* front_elem(struct Deque_int * deque){
@@ -127,19 +150,6 @@ int* front_elem(struct Deque_int * deque){
 int* back_elem(struct Deque_int * deque){
  return 0;
 }
-
-int dereference(struct Deque_int_Iterator * it){
-	return *(*it).location;
-}
-
-
-struct Deque_int_Iterator{
-	int * location;
-	void (* inc)(struct Deque_int_Iterator *);
-	void (* dec)(struct Deque_int_Iterator *);
-	int (* deref)(struct Deque_int_Iterator *);
-}
-
 
 
 #define Deque_DEFINE
