@@ -105,7 +105,52 @@ void push_b(struct Deque_int * deque, int value){
 		deque->front_indicator = &((deque->container)[1]);
 		deque->back_indicator = &((deque->front_indicator)[1]);
 		deque->front_array = deque->container;
-		deque->back_array = &(deque->container[1]);
+		deque->back_array = &(deque->container[4]);
+	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
+		int* temp = (int*) malloc(deque->capacity * 2);
+		deque->capacity = 2 * deque->capacity;
+		int start_index = (deque->capacity)/4;
+		int* temp_front_indicator = &(temp[start_index]);
+		for(Deque_int_Iterator it = deque->begin(deque); !Deque_int_Iterator_equal(it, deque->end(deque)); it.inc(&it)){
+			temp[start_index] = it.deref(&it);
+			start_index++;
+		}
+		int end_index = start_index;
+		int* temp_back_indicator = &(temp[end_index]);
+		free(deque->container);
+		deque->container = temp;
+		deque->front_indicator = temp_front_indicator;
+		deque->back_indicator = temp_back_indicator;
+		deque->front_indicator = &(deque->front_indicator[-1]);
+		*(deque->front_indicator) = value;
+		deque->num_elements = deque->num_elements + 1;
+		deque->front_array = deque->container;
+		deque->back_array = &(deque->container[deque->capacity]);
+	}else{
+		if(deque->front_indicator == deque->front_array){
+			deque->front_indicator = &(deque->back_array[-1]);
+			*(deque->front_indicator) = value;
+			deque->front_indicator = &(deque->front_indicator[-1]);
+			deque->num_elements = deque->num_elements + 1;
+		}else{
+			*(deque->front_indicator[-1]) = value;
+			deque->front_indicator = &(deque->front_indicator[-1]);
+			deque->num_elements = deque->num_elements + 1;
+		}
+	}
+
+}
+
+void push_f(struct Deque_int * deque, int value){
+	if(deque->num_elements == 0){
+		deque->container = (int*) malloc(((int)sizeof(int)) * 4);
+		(deque->container)[1] = value;
+		deque->num_elements = 1;
+		deque->capacity = 4;
+		deque->front_indicator = &((deque->container)[1]);
+		deque->back_indicator = &((deque->front_indicator)[1]);
+		deque->front_array = deque->container;
+		deque->back_array = &(deque->container[4]);
 	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
 		int* temp = (int*) malloc(deque->capacity * 2);
 		deque->capacity = 2 * deque->capacity;
@@ -139,30 +184,6 @@ void push_b(struct Deque_int * deque, int value){
 		}
 	}
 
-}
-
-void push_f(struct Deque_int * deque, int value){
-	if(deque->num_elements == 0){
-		deque->container = (int*) malloc(((int)sizeof(int)) * 4);
-		(deque->container)[1] = value;
-		deque->num_elements = 1;
-		deque->capacity = 4;
-		deque->front_indicator = &((deque->container)[1]);
-		deque->back_indicator = &((deque->front_indicator)[1]);
-	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
-		int* temp = (int*) malloc(deque->capacity * 2);
-		deque->capacity = 2 * deque->capacity;
-
-		int start_index = (deque->capacity)/4;
-		int index = start_index;
-		do{
-			index++;
-		}while(index != start_index);
-		free(deque->container);
-		deque->container = temp;
-	}else{
-
-	}
 }
 
 int container_size(struct Deque_int * deque){
