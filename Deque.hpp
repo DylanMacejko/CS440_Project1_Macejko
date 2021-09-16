@@ -30,21 +30,23 @@ int Deque_int_Iterator_equal(struct Deque_int_Iterator it1, struct Deque_int_Ite
 }
 
 
+
 void push_b(struct Deque_int * deque, int value);
 void push_f(struct Deque_int * deque, int value);
-int container_size(struct Deque_int * deque);
+size_t container_size(struct Deque_int * deque);
 void pop_b(struct Deque_int * deque);
 void pop_f(struct Deque_int * deque);
 void clear_deq(struct Deque_int * deque);
 void destructor(struct Deque_int * deque);
 int empt(struct Deque_int * deque);
-int* elem_at(struct Deque_int * deque, int index);
-int* front_elem(struct Deque_int * deque);
-int* back_elem(struct Deque_int * deque);
+int elem_at(struct Deque_int * deque, size_t index);
+int front_elem(struct Deque_int * deque);
+int back_elem(struct Deque_int * deque);
 struct Deque_int_Iterator beginning(struct Deque_int * deque);
 struct Deque_int_Iterator ending(struct Deque_int * deque);
 void Deque_int_ctor(struct Deque_int *, bool (* f)(const int, const int));
 int dereference(struct Deque_int_Iterator * it);
+void qsort(struct Deque_int * deque, struct Deque_int_Iterator it1, struct Deque_int_Iterator it2);
 
 
 struct Deque_int{
@@ -59,20 +61,22 @@ struct Deque_int{
 	Deque_int_Iterator it;
 	void (*push_back)(struct Deque_int *, int);
 	void (*push_front)(struct Deque_int *, int);
-	int (*size)(struct Deque_int *);
+	size_t (*size)(struct Deque_int *);
 	void (*pop_back)(struct Deque_int *);
 	void (*pop_front)(struct Deque_int *);
 	void (*clear)(struct Deque_int *);
 	void (*dtor)(struct Deque_int *);
 	int (*empty)(struct Deque_int *);
-	int* (*at)(struct Deque_int *, int);
-	int* (*front)(struct Deque_int *);
-	int* (*back)(struct Deque_int *);
+	int (*at)(struct Deque_int *, size_t);
+	int (*front)(struct Deque_int *);
+	int (*back)(struct Deque_int *);
 	struct Deque_int_Iterator (*begin)(struct Deque_int *);
 	struct Deque_int_Iterator (*end)(struct Deque_int *);
+	bool (* compare)(const int&, const int&);
+	void (* sort)(struct Deque_int *, struct Deque_int_Iterator, struct Deque_int_Iterator);
 };
 
-void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
+void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, const int&)){
 	deque->container = (int*) malloc(0);
 	deque->type_name = (char*) "Deque_int";
 	deque->capacity = 0;
@@ -94,6 +98,7 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
 	deque->back = &back_elem;
 	deque->begin = &beginning;
 	deque->end = &ending;
+	deque->compare = comparator;
 }
 
 void push_f(struct Deque_int * deque, int value){
@@ -186,7 +191,7 @@ void push_b(struct Deque_int * deque, int value){
 
 }
 
-int container_size(struct Deque_int * deque){
+size_t container_size(struct Deque_int * deque){
 	return sizeof(deque->container);
 }
 
@@ -229,8 +234,8 @@ int empt(struct Deque_int * deque){
 	return 0;
 }
 
-int* elem_at(struct Deque_int * deque, int index){
-	return &(deque->container)[index];
+int elem_at(struct Deque_int * deque, size_t index){
+	return (deque->container[index]);
 }
 
 
@@ -256,16 +261,21 @@ struct Deque_int_Iterator ending(struct Deque_int * deque){
 	return it;
 }
 
-int* front_elem(struct Deque_int * deque){
+int front_elem(struct Deque_int * deque){
 	return *(deque->front_indicator);
 }
 
-int* back_elem(struct Deque_int * deque){
- return *(deque->back_indicator[-1]);
+int back_elem(struct Deque_int * deque){
+ return (deque->back_indicator[-1]);
 }
 
+void qsort(struct Deque_int * deque, struct Deque_int_Iterator it1, struct Deque_int_Iterator it2){
 
-#define Deque_DEFINE
+}
+
+bool Deque_int_equal(struct Deque_int deque1, struct Deque_int deque2){
+	return 1;
+}
 
 
 #endif
