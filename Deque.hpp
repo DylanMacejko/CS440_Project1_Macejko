@@ -133,7 +133,7 @@ void push_b(struct Deque_int * deque, int value){
 			deque->front_indicator = &(deque->front_indicator[-1]);
 			deque->num_elements = deque->num_elements + 1;
 		}else{
-			*(deque->front_indicator[-1]) = value;
+			deque->front_indicator[-1] = value;
 			deque->front_indicator = &(deque->front_indicator[-1]);
 			deque->num_elements = deque->num_elements + 1;
 		}
