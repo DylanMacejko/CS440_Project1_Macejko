@@ -194,28 +194,28 @@ void pop_b(struct Deque_int * deque){
 	if(deque->num_elements == 0){
 		printf("Cannot pop from a deque of no elements");
 	}
-	deque->container = (int*) realloc(deque->container, sizeof(deque->container) - sizeof(int));
-	deque->capacity = deque->capacity - 1;
+
 }
 
 void pop_f(struct Deque_int * deque){
 	if(deque->num_elements == 0){
 		printf("Cannot pop from a deque of no elements");
 	}
-	int* temp = (int *) malloc(sizeof(deque->container) - sizeof(int));
-	for(int i=1; i<deque->capacity; i++){
-		temp[i-1] = (deque->container)[i];
-	}
-	deque->capacity = deque->capacity - 1;
+
 }
 
 void clear_deq(struct Deque_int * deque){
 	free(deque->container);
-	(deque->capacity) = 0;
+	deque->capacity = 0;
+	deque->num_elements = 0;
+	deque->front_indicator = NULL;
+	deque->back_indicator = NULL;
+	deque->front_array  = NULL;
+	deque->back_array = NULL;
 }
 
 void destructor(struct Deque_int * deque){
-
+	free(deque->container);
 }
 
 int empt(struct Deque_int * deque){
