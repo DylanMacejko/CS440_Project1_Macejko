@@ -6,8 +6,8 @@
 
 struct Deque_int_Iterator{
 	int * location;
-	int * front_ind;
-	int * back_ind;
+	int * front_arr;
+	int * back_arr;
 	void (* inc)(struct Deque_int_Iterator *);
 	void (* dec)(struct Deque_int_Iterator *);
 	int (* deref)(struct Deque_int_Iterator *);
@@ -96,7 +96,7 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* f)(const int, const int)){
 	deque->end = &ending;
 }
 
-void push_b(struct Deque_int * deque, int value){
+void push_f(struct Deque_int * deque, int value){
 	if(deque->num_elements == 0){
 		deque->container = (int*) malloc(((int)sizeof(int)) * 4);
 		(deque->container)[1] = value;
@@ -141,7 +141,7 @@ void push_b(struct Deque_int * deque, int value){
 
 }
 
-void push_f(struct Deque_int * deque, int value){
+void push_b(struct Deque_int * deque, int value){
 	if(deque->num_elements == 0){
 		deque->container = (int*) malloc(((int)sizeof(int)) * 4);
 		(deque->container)[1] = value;
@@ -195,6 +195,10 @@ void pop_b(struct Deque_int * deque){
 		printf("Cannot pop from a deque of no elements");
 	}
 
+	if(deque->back_indicator == deque->front_array){
+		//FINISH POP
+	}
+
 }
 
 void pop_f(struct Deque_int * deque){
@@ -219,10 +223,10 @@ void destructor(struct Deque_int * deque){
 }
 
 int empt(struct Deque_int * deque){
-	if((deque->capacity) == 0){
-		return 0;
+	if(deque->num_elements == 0){
+		return 1;
 	}
-	return 1;
+	return 0;
 }
 
 int* elem_at(struct Deque_int * deque, int index){
@@ -231,11 +235,25 @@ int* elem_at(struct Deque_int * deque, int index){
 
 
 struct Deque_int_Iterator beginning(struct Deque_int * deque){
-	return deque->it;
+	struct Deque_int_Iterator it;
+	it.location = deque->front_indicator;
+	it.front_arr = deque->front_array;
+	it.back_arr = deque->back_array;
+	it.inc = &increment;
+	it.dec = &decrement;
+	it.deref = &dereference;
+	return it;
 }
 
 struct Deque_int_Iterator ending(struct Deque_int * deque){
-	return deque->it;
+	struct Deque_int_Iterator it;
+	it.location = deque->front_indicator;
+	it.front_arr = deque->front_array;
+	it.back_arr = deque->back_array;
+	it.inc = &increment;
+	it.dec = &decrement;
+	it.deref = &dereference;
+	return it;
 }
 
 int* front_elem(struct Deque_int * deque){
