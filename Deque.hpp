@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <string>
 
 struct Deque_int_Iterator{
 	int * location;
@@ -51,7 +52,6 @@ void qsort(struct Deque_int * deque, struct Deque_int_Iterator it1, struct Deque
 
 struct Deque_int{
 	int* container;
-	char * type_name;
 	int capacity;
 	int num_elements;
 	int* front_indicator;
@@ -74,11 +74,12 @@ struct Deque_int{
 	struct Deque_int_Iterator (*end)(struct Deque_int *);
 	bool (* compare)(const int&, const int&);
 	void (* sort)(struct Deque_int *, struct Deque_int_Iterator, struct Deque_int_Iterator);
+	char type_name[sizeof("Deque_int")] = "Deque_int";
 };
 
 void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, const int&)){
 	deque->container = (int*) malloc(0);
-	deque->type_name = (char*) "Deque_int";
+	//deque->type_name = (char*) malloc(sizeof("Deque_int"));
 	deque->capacity = 0;
 	deque->num_elements  = 0;
 	deque->front_indicator = NULL;
@@ -103,14 +104,14 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, co
 
 void push_f(struct Deque_int * deque, int value){
 	if(deque->num_elements == 0){
-		deque->container = (int*) malloc(((int)sizeof(int)) * 4);
-		(deque->container)[1] = value;
+		deque->container = (int*) malloc(((int)sizeof(int)) * 8);
+		(deque->container)[2] = value;
 		deque->num_elements = 1;
-		deque->capacity = 4;
-		deque->front_indicator = &((deque->container)[1]);
+		deque->capacity = 8;
+		deque->front_indicator = &((deque->container)[2]);
 		deque->back_indicator = &((deque->front_indicator)[1]);
 		deque->front_array = deque->container;
-		deque->back_array = &(deque->container[4]);
+		deque->back_array = &(deque->container[8]);
 	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
 		int* temp = (int*) malloc(deque->capacity * 2);
 		deque->capacity = 2 * deque->capacity;
@@ -134,8 +135,7 @@ void push_f(struct Deque_int * deque, int value){
 	}else{
 		if(deque->front_indicator == deque->front_array){
 			deque->front_indicator = &(deque->back_array[-1]);
-			*(deque->front_indicator) = value;
-			deque->front_indicator = &(deque->front_indicator[-1]);
+			*(deque->front_indicator) = value;;
 			deque->num_elements = deque->num_elements + 1;
 		}else{
 			deque->front_indicator[-1] = value;
@@ -148,14 +148,14 @@ void push_f(struct Deque_int * deque, int value){
 
 void push_b(struct Deque_int * deque, int value){
 	if(deque->num_elements == 0){
-		deque->container = (int*) malloc(((int)sizeof(int)) * 4);
-		(deque->container)[1] = value;
+		deque->container = (int*) malloc(((int)sizeof(int)) * 8);
+		(deque->container)[2] = value;
 		deque->num_elements = 1;
-		deque->capacity = 4;
-		deque->front_indicator = &((deque->container)[1]);
+		deque->capacity = 8;
+		deque->front_indicator = &((deque->container)[2]);
 		deque->back_indicator = &((deque->front_indicator)[1]);
 		deque->front_array = deque->container;
-		deque->back_array = &(deque->container[4]);
+		deque->back_array = &(deque->container[8]);
 	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
 		int* temp = (int*) malloc(deque->capacity * 2);
 		deque->capacity = 2 * deque->capacity;
@@ -192,23 +192,33 @@ void push_b(struct Deque_int * deque, int value){
 }
 
 size_t container_size(struct Deque_int * deque){
-	return sizeof(deque->container);
+
+	return (size_t)deque->num_elements;
 }
 
 void pop_b(struct Deque_int * deque){
-	if(deque->num_elements == 0){
-		printf("Cannot pop from a deque of no elements");
-	}
+	if(deque->num_elements != 0){
+		if(deque->back_indicator == deque->front_array){
+			deque->back_indicator = deque->back_array;
+			deque->back_indicator[-1] = 0;
 
-	if(deque->back_indicator == deque->front_array){
-		//FINISH POP
+		}else{
+			deque->back_indicator[-1] = 0;
+			deque->back_indicator = &(deque->back_indicator[-1]);
+		}
+		deque->num_elements = deque->num_elements - 1;
 	}
-
 }
 
 void pop_f(struct Deque_int * deque){
-	if(deque->num_elements == 0){
-		printf("Cannot pop from a deque of no elements");
+	if(deque->num_elements != 0){
+		*(deque->front_indicator) = 0;
+		if(&(deque->front_indicator[1]) == deque->back_array){
+			deque->front_indicator = deque->front_array;
+		}else{
+			deque->front_indicator = &(deque->front_indicator[1]);
+		}
+		deque->num_elements = deque->num_elements - 1;
 	}
 
 }

@@ -253,6 +253,7 @@ main() {
         // Should print "---- Deque_int, 10".
         printf("---- %s, %d\n", deq.type_name, int(sizeof(deq.type_name)));
         // std::cout << "---- " << deq.type_name << ", " << sizeof(deq.type_name) << std::endl;
+        //printf("%d\n",int(sizeof(deq.type_name)));
         assert(sizeof deq.type_name == 10);
 
         deq.push_back(&deq, 1);
