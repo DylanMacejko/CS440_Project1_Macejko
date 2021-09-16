@@ -257,11 +257,11 @@ struct Deque_int_Iterator ending(struct Deque_int * deque){
 }
 
 int* front_elem(struct Deque_int * deque){
-	return 0;
+	return *(deque->front_indicator);
 }
 
 int* back_elem(struct Deque_int * deque){
- return 0;
+ return *(deque->back_indicator[-1]);
 }
 
 
