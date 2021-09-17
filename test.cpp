@@ -318,8 +318,11 @@ main() {
         deq1.push_back(&deq1, 4);
         assert(!Deque_int_equal(deq1, deq2));
 
+        printf("1\n");
         deq1.dtor(&deq1);
+        printf("2\n");
         deq2.dtor(&deq2);
+        printf("3\n");
     }
 
     // Test performance.
@@ -331,21 +334,25 @@ main() {
         Deque_int_ctor(&deq, int_less);
 
         for (int i = 0; i < 10000; i++) {
+            //printf("%i\n", i);
             deq.push_back(&deq, i);
         }
 
         // In one end, out the other.
         for (int i = 0; i < 20000000; i++) {
             // fprintf(stderr, "iter: %d\n", i);
+            //if(i%1000000==0)printf("%i\n", i);
             deq.push_back(&deq, i);
             deq.pop_front(&deq);
         }
         for (int i = 0; i < 20000000; i++) {
+            //if(i%1000000==0)printf("%i\n", i);
             deq.push_front(&deq, i);
             deq.pop_back(&deq);
         }
 
         // To do some computation, to prevent compiler from optimizing out.
+        printf("reaching optimization session");
         size_t sum = 0, max_size = 0;
         // Random.
         int pf = 0, pb = 0, pof = 0, pob = 0;
@@ -380,6 +387,7 @@ main() {
         printf("%zu max size\n", max_size);
         printf("%d push_backs, %d push_fronts, %d pop_backs, %d pop_fronts, %d size\n", pb, pf, pob, pof, (int) deq.size(&deq));
         deq.dtor(&deq);
+        printf("4\n");
     }
 
     // Test random access performance

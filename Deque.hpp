@@ -15,11 +15,20 @@ struct Deque_int_Iterator{
 };
 
 void increment(struct Deque_int_Iterator * it){
-
+	if(it->location == &(it->back_arr[-1])){
+		it->location = it->front_arr;
+	}else{
+		it->location = &(it->location[1]);
+	}
 }
 
 void decrement(struct Deque_int_Iterator * it){
-
+	//CHECK TO SEE HERE IF WE NEED TO CHECK FOR BEGINNING OF ITERATOR AS WELL
+	if(it->location == it->front_arr){
+		it->location = it->back_arr;
+	}else{
+		it->location = &(it->location[-1]);
+	}
 }
 
 int dereference(struct Deque_int_Iterator * it){
@@ -27,7 +36,7 @@ int dereference(struct Deque_int_Iterator * it){
 }
 
 int Deque_int_Iterator_equal(struct Deque_int_Iterator it1, struct Deque_int_Iterator it2){
-	return 1;
+	return it1.location == it2.location;
 }
 
 
@@ -75,6 +84,7 @@ struct Deque_int{
 	bool (* compare)(const int&, const int&);
 	void (* sort)(struct Deque_int *, struct Deque_int_Iterator, struct Deque_int_Iterator);
 	char type_name[sizeof("Deque_int")] = "Deque_int";
+
 };
 
 void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, const int&)){
@@ -100,6 +110,7 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, co
 	deque->begin = &beginning;
 	deque->end = &ending;
 	deque->compare = comparator;
+
 }
 
 void push_f(struct Deque_int * deque, int value){
@@ -112,8 +123,9 @@ void push_f(struct Deque_int * deque, int value){
 		deque->back_indicator = &((deque->front_indicator)[1]);
 		deque->front_array = deque->container;
 		deque->back_array = &(deque->container[8]);
-	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
-		int* temp = (int*) malloc(deque->capacity * 2);
+	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity-1){
+		printf("resizing\n");
+		int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity * 2));
 		deque->capacity = 2 * deque->capacity;
 		int start_index = (deque->capacity)/4;
 		int* temp_front_indicator = &(temp[start_index]);
@@ -156,8 +168,9 @@ void push_b(struct Deque_int * deque, int value){
 		deque->back_indicator = &((deque->front_indicator)[1]);
 		deque->front_array = deque->container;
 		deque->back_array = &(deque->container[8]);
-	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity){
-		int* temp = (int*) malloc(deque->capacity * 2);
+	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity-1){
+		printf("resizing\n");
+		int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity * 2));
 		deque->capacity = 2 * deque->capacity;
 		int start_index = (deque->capacity)/4;
 		int* temp_front_indicator = &(temp[start_index]);
@@ -177,11 +190,12 @@ void push_b(struct Deque_int * deque, int value){
 		deque->front_array = deque->container;
 		deque->back_array = &(deque->container[deque->capacity]);
 	}else{
-		if(deque->back_indicator == deque->back_array){
-			deque->back_indicator = deque->front_array;
+		if(deque->back_indicator == &(deque->back_array[-1])){
+		//	printf("looping to front in push");
 			*(deque->back_indicator) = value;
-			deque->back_indicator = &(deque->back_indicator[1]);
+			deque->back_indicator = deque->front_array;
 			deque->num_elements = deque->num_elements + 1;
+			//printf("finished loop appropriately");
 		}else{
 			*(deque->back_indicator) = value;
 			deque->back_indicator = &(deque->back_indicator[1]);
@@ -199,8 +213,8 @@ size_t container_size(struct Deque_int * deque){
 void pop_b(struct Deque_int * deque){
 	if(deque->num_elements != 0){
 		if(deque->back_indicator == deque->front_array){
-			deque->back_indicator = deque->back_array;
-			deque->back_indicator[-1] = 0;
+			deque->back_indicator = &(deque->back_array[-1]);
+			*(deque->back_indicator) = 0;
 
 		}else{
 			deque->back_indicator[-1] = 0;
@@ -213,7 +227,7 @@ void pop_b(struct Deque_int * deque){
 void pop_f(struct Deque_int * deque){
 	if(deque->num_elements != 0){
 		*(deque->front_indicator) = 0;
-		if(&(deque->front_indicator[1]) == deque->back_array){
+		if(deque->front_indicator == &(deque->back_array[-1])){
 			deque->front_indicator = deque->front_array;
 		}else{
 			deque->front_indicator = &(deque->front_indicator[1]);
@@ -224,8 +238,9 @@ void pop_f(struct Deque_int * deque){
 }
 
 void clear_deq(struct Deque_int * deque){
-	free(deque->container);
-	deque->capacity = 0;
+	for(int i=0; i<deque->capacity; i++){
+		deque->container[i] = 0;
+	}
 	deque->num_elements = 0;
 	deque->front_indicator = NULL;
 	deque->back_indicator = NULL;
@@ -262,7 +277,7 @@ struct Deque_int_Iterator beginning(struct Deque_int * deque){
 
 struct Deque_int_Iterator ending(struct Deque_int * deque){
 	struct Deque_int_Iterator it;
-	it.location = deque->front_indicator;
+	it.location = deque->back_indicator;
 	it.front_arr = deque->front_array;
 	it.back_arr = deque->back_array;
 	it.inc = &increment;
@@ -284,7 +299,20 @@ void qsort(struct Deque_int * deque, struct Deque_int_Iterator it1, struct Deque
 }
 
 bool Deque_int_equal(struct Deque_int deque1, struct Deque_int deque2){
-	return 1;
+	if(deque1.num_elements != deque2.num_elements){
+		return false;
+	}
+	struct Deque_int_Iterator it1 = deque1.begin(&deque1);
+	struct Deque_int_Iterator it2 = deque2.begin(&deque2);
+
+	while(!Deque_int_Iterator_equal(it1, deque1.end(&deque1)) && !Deque_int_Iterator_equal(it2, deque2.end(&deque2))){
+		if(deque1.compare(it1.deref(&it1), it2.deref(&it2)) || deque1.compare(it2.deref(&it2), it1.deref(&it1))){
+			return false;
+		}
+		it1.inc(&it1);
+		it2.inc(&it2);
+	}
+	return true;
 }
 
 
