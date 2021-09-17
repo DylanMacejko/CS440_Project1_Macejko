@@ -132,7 +132,7 @@ main() {
         // Should print "---- Deque_MyClass, 14".
         printf("---- %s, %d\n", deq.type_name, (int) sizeof(deq.type_name));
         // std::cout << "---- " << deq.type_name << ", " << sizeof(deq.type_name) << std::endl;
-        //assert(sizeof deq.type_name == 14);
+        assert(sizeof deq.type_name == 14);
 
         deq.push_back(&deq, MyClass{1, "Joe"});
         deq.push_back(&deq, MyClass{2, "Mary"});
@@ -252,7 +252,7 @@ main() {
         // Should print "---- Deque_int, 10".
         printf("---- %s, %d\n", deq.type_name, int(sizeof(deq.type_name)));
         // std::cout << "---- " << deq.type_name << ", " << sizeof(deq.type_name) << std::endl;
-        //assert(sizeof deq.type_name == 10);
+        assert(sizeof deq.type_name == 10);
 
         deq.push_back(&deq, 1);
         deq.push_back(&deq, 2);

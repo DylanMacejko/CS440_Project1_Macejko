@@ -77,7 +77,7 @@
 			struct Deque_##t##_Iterator (*end)(struct Deque_##t *);													\
 			bool (* compare)(const t &, const t &);																			\
 			void (* sort)(struct Deque_##t *, struct Deque_##t##_Iterator, struct Deque_##t##_Iterator);		\
-			char type_name[sizeof #t ] = #t ;														\
+			char type_name[sizeof("Deque_" #t )] = "Deque_" #t ;														\
 		};																																							\
 		void Deque_##t##_ctor(struct Deque_##t * deque, bool (* comparator)(const t & , const t & )){			\
 			deque->container = ( t *) malloc(0);																					\
