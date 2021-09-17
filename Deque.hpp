@@ -11,7 +11,7 @@
 			t * back_arr;																																\
 			void (* inc)(struct Deque_##t##_Iterator *);																		\
 			void (* dec)(struct Deque_##t##_Iterator *);																		\
-			t (* deref)(struct Deque_##t##_Iterator *);																		\
+			t & (* deref)(struct Deque_##t##_Iterator *);																		\
 		};																																							\
 																																										\
 		void increment(struct Deque_##t##_Iterator * it){																	\
@@ -30,7 +30,7 @@
 			}																																							\
 		}																																								\
 																																										\
-		t dereference(struct Deque_##t##_Iterator * it){																\
+		t & dereference(struct Deque_##t##_Iterator * it){																\
 			return *(it->location);																												\
 		}																																								\
 																																										\
@@ -45,13 +45,13 @@
 		void clear_deq(struct Deque_##t * deque);																				\
 		void destructor(struct Deque_##t * deque);																			\
 		int empt(struct Deque_##t * deque);																							\
-		t elem_at(struct Deque_##t * deque, size_t index);														\
-		t front_elem(struct Deque_##t * deque);																				\
-		t back_elem(struct Deque_##t * deque);																				\
+		t & elem_at(struct Deque_##t * deque, size_t index);														\
+		t & front_elem(struct Deque_##t * deque);																				\
+		t & back_elem(struct Deque_##t * deque);																				\
 		struct Deque_##t##_Iterator beginning(struct Deque_##t * deque);									\
 		struct Deque_##t##_Iterator ending(struct Deque_##t * deque);											\
 		void Deque_##t##_ctor(struct Deque_##t *, bool (* f)(const t & , const t & ));			\
-		t dereference(struct Deque_##t##_Iterator * it);																\
+		t & dereference(struct Deque_##t##_Iterator * it);																\
 		void qsort(struct Deque_##t * deque, struct Deque_##t##_Iterator it1, struct Deque_##t##_Iterator it2);\
 																																										\
 		struct Deque_##t {																																\
@@ -70,14 +70,14 @@
 			void (*clear)(struct Deque_##t *);																						\
 			void (*dtor)(struct Deque_##t *);																							\
 			int (*empty)(struct Deque_##t *);																							\
-			t (*at)(struct Deque_##t *, size_t);																				\
-			t (*front)(struct Deque_##t *);																							\
-			t (*back)(struct Deque_##t *);																							\
+			t & (*at)(struct Deque_##t *, size_t);																				\
+			t &  (*front)(struct Deque_##t *);																							\
+			t &  (*back)(struct Deque_##t *);																							\
 			struct Deque_##t##_Iterator (*begin)(struct Deque_##t *);												\
 			struct Deque_##t##_Iterator (*end)(struct Deque_##t *);													\
 			bool (* compare)(const t &, const t &);																			\
 			void (* sort)(struct Deque_##t *, struct Deque_##t##_Iterator, struct Deque_##t##_Iterator);		\
-			char type_name[sizeof( #t )] = #t;														\
+			char type_name[sizeof #t ] = #t ;														\
 		};																																							\
 		void Deque_##t##_ctor(struct Deque_##t * deque, bool (* comparator)(const t & , const t & )){			\
 			deque->container = ( t *) malloc(0);																					\
@@ -240,7 +240,7 @@
 			return 0;																																			\
 		}																																								\
 																																										\
-		t elem_at(struct Deque_##t * deque, size_t index){														\
+		t & elem_at(struct Deque_##t * deque, size_t index){														\
 			if(&(deque->front_indicator[index]) > &(deque->back_array[-1])){							\
 				long int offset = &(deque->front_indicator[index])-&(deque->back_array[-1]);		\
 				return deque->front_array[offset/sizeof( t )];															\
@@ -270,11 +270,11 @@
 			return it;																																		\
 		}																																								\
 																																										\
-		t front_elem(struct Deque_##t * deque){																				\
+		t & front_elem(struct Deque_##t * deque){																				\
 			return *(deque->front_indicator);																							\
 		}																																								\
 																																										\
-		t back_elem(struct Deque_##t * deque){																				\
+		t & back_elem(struct Deque_##t * deque){																				\
 		 return (deque->back_indicator[-1]);																						\
 		}																																								\
 																																										\
