@@ -3,7 +3,6 @@
 
 #include <cstdlib>
 #include <cstdio>
-#include <string>
 
 struct Deque_int_Iterator{
 	int * location;
@@ -67,7 +66,6 @@ struct Deque_int{
 	int* back_indicator;
 	int* front_array;
 	int* back_array;
-	Deque_int_Iterator it;
 	void (*push_back)(struct Deque_int *, int);
 	void (*push_front)(struct Deque_int *, int);
 	size_t (*size)(struct Deque_int *);
@@ -110,11 +108,12 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, co
 	deque->begin = &beginning;
 	deque->end = &ending;
 	deque->compare = comparator;
-
+  deque->sort = &qsort;
 }
 
 void push_f(struct Deque_int * deque, int value){
 	if(deque->num_elements == 0){
+		free(deque->container);
 		deque->container = (int*) malloc(((int)sizeof(int)) * 8);
 		(deque->container)[2] = value;
 		deque->num_elements = 1;
@@ -124,7 +123,7 @@ void push_f(struct Deque_int * deque, int value){
 		deque->front_array = deque->container;
 		deque->back_array = &(deque->container[8]);
 	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity-1){
-		printf("resizing\n");
+		//printf("resizing\n");
 		int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity * 2));
 		deque->capacity = 2 * deque->capacity;
 		int start_index = (deque->capacity)/4;
@@ -160,6 +159,7 @@ void push_f(struct Deque_int * deque, int value){
 
 void push_b(struct Deque_int * deque, int value){
 	if(deque->num_elements == 0){
+		free(deque->container);
 		deque->container = (int*) malloc(((int)sizeof(int)) * 8);
 		(deque->container)[2] = value;
 		deque->num_elements = 1;
@@ -169,7 +169,7 @@ void push_b(struct Deque_int * deque, int value){
 		deque->front_array = deque->container;
 		deque->back_array = &(deque->container[8]);
 	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity-1){
-		printf("resizing\n");
+		//printf("resizing\n");
 		int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity * 2));
 		deque->capacity = 2 * deque->capacity;
 		int start_index = (deque->capacity)/4;
@@ -206,7 +206,6 @@ void push_b(struct Deque_int * deque, int value){
 }
 
 size_t container_size(struct Deque_int * deque){
-
 	return (size_t)deque->num_elements;
 }
 
@@ -260,7 +259,11 @@ int empt(struct Deque_int * deque){
 }
 
 int elem_at(struct Deque_int * deque, size_t index){
-	return (deque->container[index]);
+	if(&(deque->front_indicator[index]) > &(deque->back_array[-1])){
+		long int offset = &(deque->front_indicator[index])-&(deque->back_array[-1]);
+		return deque->front_array[offset/sizeof(int)];
+	}
+	return (deque->front_indicator[index]);
 }
 
 
@@ -294,7 +297,44 @@ int back_elem(struct Deque_int * deque){
  return (deque->back_indicator[-1]);
 }
 
+void qsorthelper(struct Deque_int * deque, int low, int high);
+
 void qsort(struct Deque_int * deque, struct Deque_int_Iterator it1, struct Deque_int_Iterator it2){
+	int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity));
+	int counter = 0;
+	for(Deque_int_Iterator it = deque->begin(deque); !Deque_int_Iterator_equal(it, deque->end(deque)); it.inc(&it)){
+		temp[counter] = it.deref(&it);
+		counter++;
+	}
+	free(deque->container);
+	deque->container = temp;
+	deque->front_indicator = deque->container;
+	deque->back_indicator = &(deque->container[counter]);
+	deque->front_array = deque->container;
+	deque->back_array = &(deque->container[deque->capacity]);
+	qsorthelper(deque, 0, counter-1);
+}
+
+void qsorthelper(struct Deque_int * deque, int low, int high){
+	if(low<high){
+		int pivot = deque->container[high];
+		int swapping = low - 1;
+		int part;
+		for (int iterat = low; iterat<=high-1; iterat++){
+			if(deque->compare(deque->container[iterat], pivot)){
+				swapping++;
+				int temp1 = deque->container[swapping];
+				deque->container[swapping] = deque->container[iterat];
+				deque->container[iterat] = temp1;
+			}
+			int temp2 = deque->container[swapping+1];
+			deque->container[swapping+1] = deque->container[high];
+			deque->container[high] = temp2;
+		}
+		part = swapping+1;
+		qsorthelper(deque, low, part-1);
+		qsorthelper(deque, part+1, high);
+	}
 
 }
 

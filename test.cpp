@@ -318,11 +318,11 @@ main() {
         deq1.push_back(&deq1, 4);
         assert(!Deque_int_equal(deq1, deq2));
 
-        printf("1\n");
+        //printf("1\n");
         deq1.dtor(&deq1);
-        printf("2\n");
+        //printf("2\n");
         deq2.dtor(&deq2);
-        printf("3\n");
+        //printf("3\n");
     }
 
     // Test performance.
@@ -352,7 +352,7 @@ main() {
         }
 
         // To do some computation, to prevent compiler from optimizing out.
-        printf("reaching optimization session");
+        //printf("reaching optimization session");
         size_t sum = 0, max_size = 0;
         // Random.
         int pf = 0, pb = 0, pof = 0, pob = 0;
