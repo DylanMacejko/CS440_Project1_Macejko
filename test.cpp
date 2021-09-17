@@ -387,7 +387,7 @@ main() {
         printf("%zu max size\n", max_size);
         printf("%d push_backs, %d push_fronts, %d pop_backs, %d pop_fronts, %d size\n", pb, pf, pob, pof, (int) deq.size(&deq));
         deq.dtor(&deq);
-        printf("4\n");
+        //printf("4\n");
     }
 
     // Test random access performance
@@ -459,6 +459,9 @@ main() {
            deq2.push_back(&deq2,i);
        }
 
+       //printdeq(deq1);
+       //printdeq(deq2);
+
       assert(Deque_int_equal(deq1, deq2));
 
       deq1.dtor(&deq1);
@@ -510,7 +513,7 @@ main() {
     */
     // Performance testing for sorting
     {
-
+        printf("Here1\n");
        Deque_int deq1;
        Deque_int_ctor(&deq1, int_less);
 
@@ -521,6 +524,8 @@ main() {
             deq1.push_back(&deq1, rand(-1000000, 1000000)(e));
         }
 
+        printf("Here2\n");
+
        auto iter1 = deq1.begin(&deq1);
        auto iter2 = deq1.begin(&deq1);
 
@@ -530,9 +535,11 @@ main() {
        for(int i=0;i<20;i++)
            iter2.inc(&iter2);
 
-       for(int i=0;i<1000000;i++)
+      printf("Here3\n");
+       for(int i=0;i<1000;i++){
+           //if(i%100==0) printf("Iteration %i\n", i);
        	   deq1.sort(&deq1, iter1,iter2);
-
+      }
        deq1.dtor(&deq1);
 
     }
