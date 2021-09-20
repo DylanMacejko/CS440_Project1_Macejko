@@ -280,29 +280,56 @@
 																																										\
 		void qsorthelper(struct Deque_##t * deque, int low, int high);									\
 																																										\
-		void qsort(struct Deque_##t * deque, struct Deque_##t##_Iterator it1, struct Deque_##t##_Iterator it2){  \
-				t * temp = ( t *) malloc((int)(sizeof( t ) * deque->capacity));						\
-				int counter = 0;																														\
-				for(Deque_##t##_Iterator it = deque->begin(deque); !Deque_##t##_Iterator_equal(it, deque->end(deque)); it.inc(&it)){		\
-					temp[counter] = it.deref(&it);																						\
-					counter++;																																\
-				}																																						\
-				free(deque->container);																											\
-				deque->container = temp;																										\
-				deque->front_indicator = deque->container;																	\
-				deque->back_indicator = &(deque->container[counter]);												\
-				deque->front_array = deque->container;																			\
-				deque->back_array = &(deque->container[deque->capacity]);										\
-																																										\
+		void qsort(struct Deque_##t * deque, struct Deque_##t##_Iterator it1, struct Deque_##t##_Iterator it2){	\
+				Deque_##t##_Iterator infront;																									\
+				Deque_##t##_Iterator behind;																									\
+				infront.location = &(it1.location[1]);																			\
+				infront.front_arr = it1.front_arr;																					\
+				infront.back_arr = it1.back_arr;																						\
+				infront.inc = it1.inc;																											\
+				infront.dec = it1.dec;																											\
+				infront.deref = it1.deref;																									\
+				behind.location = it1.location;																							\
+				behind.front_arr = it1.front_arr;																						\
+				behind.back_arr = it1.back_arr;																							\
+				behind.inc = it1.inc;																												\
+				behind.dec = it1.dec;																												\
+				behind.deref = it1.deref;																										\
 				bool continue_sort = false;																									\
-				for(int i=1; i<counter; i++){																								\
-					if(deque->compare(deque->container[i], deque->container[i-1])){						\
-						continue_sort = true;																										\
-						break;																																	\
-					}																																					\
+				for(; !Deque_##t##_Iterator_equal(infront, it2); infront.inc(&infront), behind.inc(&behind)){	\
+						if(deque->compare(infront.deref(&infront), behind.deref(&behind))){			\
+							continue_sort = true;																									\
+							break;																																\
+						}																																				\
 				}																																						\
-				if(continue_sort)																														\
-					qsorthelper(deque, 0, counter-1);																					\
+				if(continue_sort){																													\
+					int first_iterator_index = -1;																						\
+					int second_iterator_index = -1;																						\
+					if(it2.location<=it1.location){																						\
+						t * temp = ( t *) malloc((int)(sizeof( t ) * deque->capacity));				\
+						int counter = 0;																												\
+						for(Deque_##t##_Iterator it = deque->begin(deque); !Deque_##t##_Iterator_equal(it, deque->end(deque)); it.inc(&it)){	\
+							temp[counter] = it.deref(&it);																				\
+							if(Deque_##t##_Iterator_equal(it, it1)){																\
+								first_iterator_index = counter;																			\
+							}																																			\
+							if(Deque_##t##_Iterator_equal(it, it2)){																\
+								second_iterator_index = counter;																		\
+							}																																			\
+							counter++;																														\
+						}																																				\
+						free(deque->container);																									\
+						deque->container = temp;																								\
+						deque->front_indicator = deque->container;															\
+						deque->back_indicator = &(deque->container[counter]);										\
+						deque->front_array = deque->container;																	\
+						deque->back_array = &(deque->container[deque->capacity]);								\
+					}else{																																		\
+						first_iterator_index = ((it1.location) - (deque->front_array));					\
+						second_iterator_index = ((it2.location)-(deque->front_array));					\
+					}																																					\
+					qsorthelper(deque, first_iterator_index, second_iterator_index-1);				\
+				}																																						\
 		}																																								\
 																																										\
 		void qsorthelper(struct Deque_##t * deque, int low, int high){									\
