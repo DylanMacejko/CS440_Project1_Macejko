@@ -256,10 +256,16 @@ main() {
         assert(sizeof deq.type_name == 10);
 
         deq.push_back(&deq, 1);
+
         deq.push_back(&deq, 2);
+
         deq.push_back(&deq, 3);
+
         deq.push_front(&deq, 0);
+
+
         deq.push_front(&deq, -1);
+
 
         printf("%d\n", deq.front(&deq));
         printf("%d\n", deq.back(&deq));
@@ -381,6 +387,7 @@ main() {
         deq.dtor(&deq);
     }
 
+
     // Test random access performance
     {
        size_t sum = 0;
@@ -456,6 +463,7 @@ main() {
       deq2.dtor(&deq2);
     }
 
+
     // Test sort with different comparators.
     {
         Deque_MyClass sort_by_id, sorted_by_id;
@@ -497,6 +505,7 @@ main() {
         sort_by_name.dtor(&sort_by_name);
         sorted_by_name.dtor(&sorted_by_name);
     }
+
 
 
     // Performance testing for sorting

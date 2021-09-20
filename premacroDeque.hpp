@@ -114,8 +114,9 @@ void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, co
 
 void push_f(struct Deque_int * deque, int value){
 	if(deque->num_elements == 0){
+		//printf("Starting from scratch \n");
 		free(deque->container);
-		deque->container = (int*) malloc(((int)sizeof(int)) * 8);
+		deque->container = (int*) malloc((sizeof(int)) * 8);
 		*(deque->container) = value;
 		deque->num_elements = 1;
 		deque->capacity = 8;
@@ -125,7 +126,8 @@ void push_f(struct Deque_int * deque, int value){
 		deque->back_array = &(deque->container[8]);
 	}else if(deque->num_elements > 0 && deque->num_elements == deque->capacity-1){
 		//printf("resizing\n");
-		int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity * 2));
+		//printf("Resizing array\n");
+		int* temp = (int*) malloc((sizeof(int) * deque->capacity * 2));
 		deque->capacity = 2 * deque->capacity;
 		int start_index = 0;
 		int* temp_front_indicator = &(temp[start_index]);
@@ -145,11 +147,14 @@ void push_f(struct Deque_int * deque, int value){
 		deque->front_array = deque->container;
 		deque->back_array = &(deque->container[deque->capacity]);
 	}else{
+		//printf("In the else\n");
 		if(deque->front_indicator == deque->front_array){
+			//printf("The front indicator matches the front of the array. Looping back");
 			deque->front_indicator = &(deque->back_array[-1]);
-			*(deque->front_indicator) = value;;
+			*(deque->front_indicator) = value;
 			deque->num_elements = deque->num_elements + 1;
 		}else{
+			//printf("The front indicator does not match the front of the array. Moving back");
 			deque->front_indicator[-1] = value;
 			deque->front_indicator = &(deque->front_indicator[-1]);
 			deque->num_elements = deque->num_elements + 1;
@@ -261,9 +266,12 @@ int empt(struct Deque_int * deque){
 
 int elem_at(struct Deque_int * deque, size_t index){
 	if(&(deque->front_indicator[index]) > &(deque->back_array[-1])){
-		long int offset = &(deque->front_indicator[index])-&(deque->back_array[-1]);
-		return deque->front_array[offset/sizeof(int)];
+		long int offset = &(deque->front_indicator[index])-&(deque->back_array[-1])-1;
+		//printf("Front indicator after back array");
+		//printf("This is the index produced by the offset: %ld", offset);
+		return deque->front_array[offset];
 	}
+	//printf("Front indicator before back array");
 	return (deque->front_indicator[index]);
 }
 

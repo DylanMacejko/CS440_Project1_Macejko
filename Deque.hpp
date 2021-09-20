@@ -242,8 +242,8 @@
 																																										\
 		t & elem_at(struct Deque_##t * deque, size_t index){														\
 			if(&(deque->front_indicator[index]) > &(deque->back_array[-1])){							\
-				long int offset = &(deque->front_indicator[index])-&(deque->back_array[-1]);		\
-				return deque->front_array[offset/sizeof( t )];															\
+				long int offset = &(deque->front_indicator[index])-&(deque->back_array[-1])-1;		\
+				return deque->front_array[offset];															\
 			}																																							\
 			return (deque->front_indicator[index]);																				\
 		}																																								\
