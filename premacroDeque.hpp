@@ -86,6 +86,7 @@ struct Deque_int{
 };
 
 void Deque_int_ctor(struct Deque_int * deque, bool (* comparator)(const int&, const int&)){
+
 	deque->container = (int*) malloc(0);
 	//deque->type_name = (char*) malloc(sizeof("Deque_int"));
 	deque->capacity = 0;
@@ -313,28 +314,57 @@ void qsort(struct Deque_int * deque, struct Deque_int_Iterator it1, struct Deque
 	}
 	if(continue_sort){
 	*/
-		int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity));
-		int counter = 0;
-		for(Deque_int_Iterator it = deque->begin(deque); !Deque_int_Iterator_equal(it, deque->end(deque)); it.inc(&it)){
-			temp[counter] = it.deref(&it);
-			counter++;
-		}
-		free(deque->container);
-		deque->container = temp;
-		deque->front_indicator = deque->container;
-		deque->back_indicator = &(deque->container[counter]);
-		deque->front_array = deque->container;
-		deque->back_array = &(deque->container[deque->capacity]);
-
+		Deque_int_Iterator infront;
+		Deque_int_Iterator behind;
+		infront.location = &(it1.location[1]);
+		infront.front_arr = it1.front_arr;
+		infront.back_arr = it1.back_arr;
+		infront.inc = it1.inc;
+		infront.dec = it1.dec;
+		infront.deref = it1.deref;
+		behind.location = it1.location;
+		behind.front_arr = it1.front_arr;
+		behind.back_arr = it1.back_arr;
+		behind.inc = it1.inc;
+		behind.dec = it1.dec;
+		behind.deref = it1.deref;
 		bool continue_sort = false;
-		for(int i=1; i<counter; i++){
-			if(deque->compare(deque->container[i], deque->container[i-1])){
-				continue_sort = true;
-				break;
-			}
+
+
+		for(; !Deque_int_Iterator_equal(infront, it2); infront.inc(&infront), behind.inc(&behind)){
+				if(deque->compare(infront.deref(&infront), behind.deref(&behind))){
+					continue_sort = true;
+					break;
+				}
 		}
-		if(continue_sort)
-			qsorthelper(deque, 0, counter-1);
+
+
+
+		if(continue_sort){
+			int* temp = (int*) malloc((int)(sizeof(int) * deque->capacity));
+			int counter = 0;
+			int first_iterator_index = -1;
+			int second_iterator_index = -1;
+			for(Deque_int_Iterator it = deque->begin(deque); !Deque_int_Iterator_equal(it, deque->end(deque)); it.inc(&it)){
+				temp[counter] = it.deref(&it);
+				if(Deque_int_Iterator_equal(it, it1)){
+					first_iterator_index = counter;
+				}
+				if(Deque_int_Iterator_equal(it, it2)){
+					second_iterator_index = counter;
+				}
+
+				counter++;
+			}
+			free(deque->container);
+			deque->container = temp;
+			deque->front_indicator = deque->container;
+			deque->back_indicator = &(deque->container[counter]);
+			deque->front_array = deque->container;
+			deque->back_array = &(deque->container[deque->capacity]);
+
+			qsorthelper(deque, first_iterator_index, second_iterator_index-1);
+		}
 	//}
 }
 

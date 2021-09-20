@@ -12,7 +12,7 @@
 #include <string.h>
 #include <algorithm>
 #include <typeinfo>
-#include "Deque.hpp"
+#include "premacroDeque.hpp"
 
 // May assume memcpy()-able.
 // May assume = operator.
@@ -103,7 +103,7 @@ MyClass_print(const MyClass *o) {
     printf("%s\n", o->name);
 }
 
-Deque_DEFINE(MyClass)
+//Deque_DEFINE(MyClass)
 
 /*
  * Test for int.
@@ -114,12 +114,13 @@ int_less(const int &o1, const int &o2) {
     return o1 < o2;
 }
 
-Deque_DEFINE(int)
+//Deque_DEFINE(int)
 
 int
 main() {
     FILE *devnull = fopen("/dev/null", "w");
     assert(devnull != 0);
+    /*
     {
         Deque_MyClass deq;
         Deque_MyClass_ctor(&deq, MyClass_less_by_id);
@@ -240,7 +241,7 @@ main() {
         }
 
     }
-
+    */
     // Test that it can handle other types.  Tests are the same, more or less.
     {
         Deque_int deq;
@@ -456,6 +457,7 @@ main() {
     }
 
     // Test sort with different comparators.
+    /*
     {
         Deque_MyClass sort_by_id, sorted_by_id;
         Deque_MyClass sort_by_name, sorted_by_name;
@@ -496,6 +498,7 @@ main() {
         sort_by_name.dtor(&sort_by_name);
         sorted_by_name.dtor(&sorted_by_name);
     }
+    */
 
     // Performance testing for sorting
     {
